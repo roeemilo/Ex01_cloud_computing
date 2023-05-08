@@ -1,4 +1,6 @@
-ubuntu@ip-172-31-85-157:~/db14de14bcd4e0603eb30f26914d9a2b$ cat setup.sh
+# debug
+# set -o xtrace
+
 KEY_NAME="cloud-course-`date +'%N'`"
 KEY_PEM="$KEY_NAME.pem"
 
@@ -58,35 +60,14 @@ echo "setup production environment"
 ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP <<EOF
   sudo apt update
   sudo apt install python3-pip -y
-  pip3 install flask
+  sudo pip3 install flask
   #run app
-  nohup flask run --host 0.0.0.0  &>/dev/null &
+  nohup /usr/local/bin/flask run --host 0.0.0.0  &>/dev/null &
   exit
+
 EOF
 
 sleep 30
 curl -X POST "http://$PUBLIC_IP:5000/entry?plate=123-123-123&parkingLot=382"
-sleep 30
+sleep 60
 curl -X POST "http://$PUBLIC_IP:5000/exit?ticketId=0"
-sleep 30
-curl -X POST "http://$PUBLIC_IP:5000/exit?ticketId=1234"
-
-
-
-#     sudo apt update
-#     sudo apt install python3-pip -y
-#     pip3 install flask
-#
-#
-# for ((i=1; i<=5; i++))
-#   do
-#   # Try to run the commands
-#   sudo apt update
-#   # Check if the commands ran successfully
-#   if sudo apt install python3-flask -y; then
-#         echo "Commands ran successfully on try $i"
-#         break
-#   fi
-#   echo "Commands failed on try $i. Retrying in 5 seconds..."
-#   sleep 5
-#   done
